@@ -1,10 +1,10 @@
-package utils
+package jsons
 
 import (
 	"bytes"
-	"chan_tool/strs"
 	"encoding/json"
 	"fmt"
+	"github.com/chaniqure/chan_tool/strs"
 	"log"
 	"reflect"
 	"regexp"
@@ -14,28 +14,19 @@ import (
 )
 
 // 结构体转为json
-func Struct2Json(obj interface{}) string {
+func Struct2Json(obj interface{}) (string, error) {
 	str, err := json.Marshal(obj)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("[Struct2Json]转换异常: %v", err))
-	}
-	return string(str)
+	return string(str), err
 }
 
 // json转为结构体
-func Json2Struct(str string, obj interface{}) {
+func Json2Struct(str string, obj interface{}) error {
 	// 将json转为结构体
-	err := json.Unmarshal([]byte(str), obj)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("[Json2Struct]转换异常: %v", err))
-	}
+	return json.Unmarshal([]byte(str), obj)
 }
-func Byte2Struct(bytes []byte, obj interface{}) {
+func Byte2Struct(bytes []byte, obj interface{}) error {
 	// 将json转为结构体
-	err := json.Unmarshal(bytes, obj)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("[Json2Struct]转换异常: %v", err))
-	}
+	return json.Unmarshal(bytes, obj)
 }
 
 // json interface转为结构体
@@ -46,17 +37,24 @@ func JsonI2Struct(str interface{}, obj interface{}) {
 }
 
 // 结构体转结构体, json为中间桥梁, struct2必须以指针方式传递, 否则可能获取到空数据
-func Struct2StructByJson(struct1 interface{}, struct2 interface{}) {
+func Struct2StructByJson(struct1 interface{}, struct2 interface{}) error {
 	// 转换为响应结构体, 隐藏部分字段
-	jsonStr := Struct2Json(struct1)
-	Json2Struct(jsonStr, struct2)
+	jsonStr, err := Struct2Json(struct1)
+	if err != nil {
+		return err
+	}
+	return Json2Struct(jsonStr, struct2)
 }
 
 // 结构体转结构体，不会丢失精度的, json为中间桥梁, struct2必须以指针方式传递, 否则可能获取到空数据
-func Struct2StructByJsonHighPrecision(struct1 interface{}, struct2 interface{}) {
+func Struct2StructByJsonHighPrecision(struct1 interface{}, struct2 interface{}) error {
 	// 转换为响应结构体, 隐藏部分字段
-	jsonStr := Struct2Json(struct1)
+	jsonStr, err := Struct2Json(struct1)
+	if err != nil {
+		return err
+	}
 	Json2StructHighPrecision(jsonStr, struct2)
+	return nil
 }
 
 func Json2StructHighPrecision(str string, obj interface{}) {

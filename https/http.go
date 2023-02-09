@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/chaniqure/chan_tool/jsons"
 	"io"
 	"io/ioutil"
 	"net"
@@ -123,6 +124,43 @@ func Get(url string) (resp *http.Response, err error) {
 	req.Header.Set("User-Agent", userAgent())
 
 	return HTTPClient.Do(req)
+}
+
+// httpGet performs a GET request with a proper User-Agent string.
+// Callers should close resp.Body when done reading from it.
+func GetStr(url string) (str string, err error) {
+	resp, err := Get(url)
+	if err != nil {
+		return "", err
+	}
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
+// httpGet performs a GET request with a proper User-Agent string.
+// Callers should close resp.Body when done reading from it.
+func GetObject(url string, obj interface{}) (err error) {
+	resp, err := Get(url)
+	if err != nil {
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	jsons.Byte2Struct(body, obj)
+	return nil
 }
 
 // userAgent builds and returns the User-Agent string to use in requests.
