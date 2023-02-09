@@ -1,4 +1,4 @@
-module chan_tool
+module github.com/chaniqure/chan_tool
 
 go 1.19
 
