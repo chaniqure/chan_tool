@@ -143,6 +143,21 @@ func GetStr(url string) (str string, err error) {
 	}
 	return string(body), nil
 }
+func GetBytes(url string) (data []byte, err error) {
+	resp, err := Get(url)
+	if err != nil {
+		return
+	}
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	data, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	return
+}
 
 // httpGet performs a GET request with a proper User-Agent string.
 // Callers should close resp.Body when done reading from it.

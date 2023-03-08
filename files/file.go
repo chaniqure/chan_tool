@@ -402,3 +402,41 @@ func DeleteFileRecursion(folder string) error {
 		return nil
 	})
 }
+func Copy(sourceFile, targetFile string) error {
+	file1, err := os.Open(sourceFile)
+	if err != nil {
+		return err
+	}
+	file2, err := os.OpenFile(targetFile, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer file1.Close()
+	defer file2.Close()
+	_, err = io.Copy(file2, file1)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetPath() string {
+	d, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	return d
+}
+
+func WriteStrToFile(f, content string) {
+	err := os.WriteFile(f, []byte(content), os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+}
+func WriteBytesToFile(f string, b []byte) {
+	err := os.WriteFile(f, b, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+}
